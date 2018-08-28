@@ -1,0 +1,26 @@
+dist: trusty
+sudo: required
+language: go
+services:
+- mysql
+before_install:
+- go get github.com/golang/dep/cmd/dep
+install:
+- dep ensure
+before_script:
+- go build -ldflags="-X main.Version=$TRAVIS_TAG"
+- go get github.com/alecthomas/gometalinter
+- gometalinter --install
+- gometalinter --config=gometalinter.json
+- go get golang.org/x/tools/cmd/cover
+- go get github.com/mattn/goveralls
+script: goveralls -v -race -package ./...
+deploy:
+  provider: releases
+  skip_cleanup: true
+  file: pas
+  on:
+    repo: putdotio/pas
+    tags: true
+  api_key:
+    secure: iDa+SowkDXauZ4qzAqdLbPcpYTy6Xe1CsSfFkWG5KH1v6zaayIiwePudKumzw9rH2HpRvcMKaD86hXnXKocMuEcd086iH/cOWQ6OEMgaQZQxEm0ZFqr6umKPTzyGi9nmkgRunb1Tq0lolWXccVXw7Qf5wxWCtYWwspO6JuFjJt8SkCsYD1lNFFyVkxwovPOE42k2uelFmLIvYF4GsYGg0VlNn8N5d8ZfmMdfXM8YuX4/v4bKZPklADTEmRh5Z23wDr7GspAbW2y6xebJyM5y7CS6bAobvF2Xy+qZgHeD+YlcDR5yce5Mg+CFhTvJXkYZpUfk1Ep8Y5bD0vIAyQsUovbbFYFdM6kRDYPlG1wRuRTUVZaUM7/NPfrWTHWEPcdAhgLA5s5rQRSTu1hY4XAtDv/wUGVlfRHmS6o0O9OQADXeWp6fsNkkd6atb+CK9b31aZB/lejAQazmGif/RFJQ6MK3g0uulAHiIOLo9VW2XZVc+UVNM75XMKfLibY5RLX06sc1cRlet7HPbycanVGQ3/LXs5We8pPT7rTvk6qvi/46bemuM/C+/EFWRkISToKZF9IjDt2/+4cLZGUFFDnIm9RCR9Xe4KlmQ15H3ZwCxWIs5NKzs7fPUj0eQk5+L0+MUecnckW7zww6mJTBoUSt5txnll8vaqJ+xGa2QFv0B+8=
