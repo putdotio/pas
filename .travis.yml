@@ -14,6 +14,7 @@ before_script:
 - gometalinter --config=gometalinter.json
 - go get golang.org/x/tools/cmd/cover
 - go get github.com/mattn/goveralls
+- mysql -e 'CREATE DATABASE test;'
 script: goveralls -v -race -package ./...
 deploy:
   provider: releases
