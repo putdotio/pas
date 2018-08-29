@@ -12,21 +12,23 @@ const (
 	TypeInteger    = PropertyType("integer")
 	TypeBigInteger = PropertyType("big_integer")
 	TypeFloat      = PropertyType("float")
+	TypeDouble     = PropertyType("double")
 	TypeDecimal    = PropertyType("decimal")
 	TypeBoolean    = PropertyType("boolean")
 	TypeDate       = PropertyType("date")
 	TypeDateTime   = PropertyType("datetime")
 )
 
-var propertyTypes = map[PropertyType]struct{}{
-	TypeString:     struct{}{},
-	TypeInteger:    struct{}{},
-	TypeBigInteger: struct{}{},
-	TypeFloat:      struct{}{},
-	TypeDecimal:    struct{}{},
-	TypeBoolean:    struct{}{},
-	TypeDate:       struct{}{},
-	TypeDateTime:   struct{}{},
+var propertyTypes = map[PropertyType]string{
+	TypeString:     "varchar(2000)",
+	TypeInteger:    "int",
+	TypeBigInteger: "bigint",
+	TypeFloat:      "float",
+	TypeDouble:     "double",
+	TypeDecimal:    "decimal",
+	TypeBoolean:    "tinyint(1)",
+	TypeDate:       "date",
+	TypeDateTime:   "datetime",
 }
 
 type Event struct {
@@ -75,6 +77,10 @@ type Property struct {
 	Type  PropertyType `json:"type"`
 	Name  PropertyName `json:"name"`
 	Value interface{}  `json:"value"`
+}
+
+func (p Property) DBType() string {
+	return propertyTypes[p.Type]
 }
 
 type PropertyName string

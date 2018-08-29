@@ -11,6 +11,8 @@ type Config struct {
 	ListenAddress string
 	// Give some time to unfinished HTTP requests before shutting down the server (milliseconds).
 	ShutdownTimeout uint
+
+	MySQLDSN string
 }
 
 func (c *Config) Read() error {
