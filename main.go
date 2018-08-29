@@ -103,7 +103,7 @@ func handleEvents(w http.ResponseWriter, r *http.Request) {
 			sb.WriteString(string(p.Name))
 		}
 		sb.WriteString(") values (?, ?")
-		for _ = range e.Properties {
+		for range e.Properties {
 			sb.WriteString(",?")
 		}
 		sb.WriteRune(')')
@@ -211,7 +211,7 @@ func handleUsers(w http.ResponseWriter, r *http.Request) {
 			sb.WriteString(string(p.Name))
 		}
 		sb.WriteString(") values (?")
-		for _ = range e.Properties {
+		for range e.Properties {
 			sb.WriteString(",?")
 		}
 		sb.WriteRune(')')
