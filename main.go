@@ -48,12 +48,13 @@ func main() {
 	server.Addr = config.ListenAddress
 	server.Handler = cors.Default().Handler(mux)
 
-	err = server.ListenAndServe()
-
-	if err == http.ErrServerClosed {
-		return
-	}
-	log.Fatal(err)
+	go func() {
+		err = server.ListenAndServe()
+		if err == http.ErrServerClosed {
+			return
+		}
+		log.Fatal(err)
+	}()
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
@@ -66,7 +67,6 @@ func main() {
 	err = server.Shutdown(ctx)
 	if err != nil {
 		log.Fatal("shutdown error:", err)
-
 	}
 }
 
