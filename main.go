@@ -48,7 +48,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db.Close()
 
 	analytics = pas.NewAnalytics(db)
 
@@ -78,5 +77,9 @@ func main() {
 	err = server.Shutdown(ctx)
 	if err != nil {
 		log.Fatal("shutdown error:", err)
+	}
+	err = db.Close()
+	if err != nil {
+		log.Fatal(err)
 	}
 }
