@@ -1,8 +1,11 @@
 package main
 
-import "strings"
+import (
+	"strings"
+	"time"
+)
 
-func insertEvent(e Event) (string, []interface{}) {
+func insertEvent(e Event, t time.Time) (string, []interface{}) {
 	var sb strings.Builder
 	sb.WriteString("insert into ")
 	sb.WriteString(string(e.Name))
@@ -18,7 +21,11 @@ func insertEvent(e Event) (string, []interface{}) {
 	sb.WriteRune(')')
 	values := make([]interface{}, len(e.Properties)+2)
 	values[0] = string(e.UserID)
-	values[1] = e.Timestamp
+	if e.Timestamp != nil {
+		values[1] = e.Timestamp
+	} else {
+		values[1] = t
+	}
 	for i := range e.Properties {
 		values[i+2] = e.Properties[i].Value
 	}
@@ -73,23 +80,24 @@ func existingEventColumns(table string) (map[string]struct{}, error) {
 	return existingColumns, rows.Err()
 }
 
-func insertUser(u User) (string, []interface{}) {
+func insertUser(u User, t time.Time) (string, []interface{}) {
 	var sb strings.Builder
 	sb.WriteString("insert into user") // TODO upsert
-	sb.WriteString("(id")
+	sb.WriteString("(id, timestamp")
 	for _, p := range u.Properties {
 		sb.WriteRune(',')
 		sb.WriteString(string(p.Name))
 	}
-	sb.WriteString(") values (?")
+	sb.WriteString(") values (?, ?")
 	for range u.Properties {
 		sb.WriteString(",?")
 	}
 	sb.WriteRune(')')
-	values := make([]interface{}, len(u.Properties)+1)
+	values := make([]interface{}, len(u.Properties)+2)
 	values[0] = string(u.ID)
+	values[1] = t
 	for i := range u.Properties {
-		values[i+1] = u.Properties[i].Value
+		values[i+2] = u.Properties[i].Value
 	}
 	return sb.String(), values
 }
@@ -97,7 +105,7 @@ func insertUser(u User) (string, []interface{}) {
 func createUserTable(u User) string {
 	var sb strings.Builder
 	sb.WriteString("create table user")
-	sb.WriteString("(id varchar(255) not null, timestamp datetime") // TODO make timestamp not null
+	sb.WriteString("(id varchar(255) not null, timestamp datetime not null")
 	for _, p := range u.Properties {
 		sb.WriteRune(',')
 		sb.WriteString(string(p.Name))

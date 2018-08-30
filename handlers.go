@@ -20,11 +20,8 @@ func handleEvents(w http.ResponseWriter, r *http.Request) {
 	}
 	now := time.Now().UTC()
 	for _, e := range events.Events {
-		if e.Timestamp == nil {
-			e.Timestamp = &now
-		}
 		i := EventInserter{e}
-		err = runInserter(i)
+		err = runInserter(i, now)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -44,9 +41,10 @@ func handleUsers(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	now := time.Now().UTC()
 	for _, u := range users.Users {
 		i := UserInserter{u}
-		err = runInserter(i)
+		err = runInserter(i, now)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

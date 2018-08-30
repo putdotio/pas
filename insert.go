@@ -1,11 +1,13 @@
 package main
 
 import (
+	"time"
+
 	"github.com/go-sql-driver/mysql"
 )
 
-func runInserter(i Inserter) error {
-	sql, values := i.InsertSQL()
+func runInserter(i Inserter, t time.Time) error {
+	sql, values := i.InsertSQL(t)
 	_, err := db.Exec(sql, values...)
 	if merr, ok := err.(*mysql.MySQLError); ok {
 		if merr.Number == 1146 { // table doesn't exist
@@ -36,18 +38,18 @@ func runInserter(i Inserter) error {
 }
 
 type Inserter interface {
-	InsertSQL() (sql string, values []interface{})
+	InsertSQL(timestamp time.Time) (sql string, values []interface{})
 	CreateTableSQL() string
 	ExistingColumns() (map[string]struct{}, error)
-	AlterTableSQL(map[string]struct{}) string
+	AlterTableSQL(existingColumns map[string]struct{}) string
 }
 
 type EventInserter struct {
 	e Event
 }
 
-func (i EventInserter) InsertSQL() (sql string, values []interface{}) {
-	return insertEvent(i.e)
+func (i EventInserter) InsertSQL(t time.Time) (sql string, values []interface{}) {
+	return insertEvent(i.e, t)
 }
 
 func (i EventInserter) CreateTableSQL() string {
@@ -66,8 +68,8 @@ type UserInserter struct {
 	u User
 }
 
-func (i UserInserter) InsertSQL() (sql string, values []interface{}) {
-	return insertUser(i.u)
+func (i UserInserter) InsertSQL(t time.Time) (sql string, values []interface{}) {
+	return insertUser(i.u, t)
 }
 
 func (i UserInserter) CreateTableSQL() string {
