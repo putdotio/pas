@@ -34,7 +34,6 @@ func TestPostEvents(t *testing.T) {
 	rr := httptest.NewRecorder()
 	handler := http.HandlerFunc(handleEvents)
 	handler.ServeHTTP(rr, req)
-	t.Log(rr.Body.String())
 	if status := rr.Code; status != http.StatusOK {
 		t.Errorf("handler returned wrong status code: got %v want %v",
 			status, http.StatusOK)
@@ -56,7 +55,6 @@ func TestPostUsers(t *testing.T) {
 	rr := httptest.NewRecorder()
 	handler := http.HandlerFunc(handleUsers)
 	handler.ServeHTTP(rr, req)
-	t.Log(rr.Body.String())
 	if status := rr.Code; status != http.StatusOK {
 		t.Errorf("handler returned wrong status code: got %v want %v",
 			status, http.StatusOK)

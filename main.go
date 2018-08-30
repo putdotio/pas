@@ -14,7 +14,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/go-sql-driver/mysql"
 	"github.com/rs/cors"
 )
@@ -114,8 +113,6 @@ func handleEvents(w http.ResponseWriter, r *http.Request) {
 			values[i+2] = e.Properties[i].Value
 		}
 		sql := sb.String()
-		println(sql)
-		spew.Dump(values)
 		_, err = db.Exec(sql, values...)
 		if merr, ok := err.(*mysql.MySQLError); ok && merr.Number == 1146 {
 			var cb strings.Builder
@@ -221,8 +218,6 @@ func handleUsers(w http.ResponseWriter, r *http.Request) {
 			values[i+1] = e.Properties[i].Value
 		}
 		sql := sb.String()
-		println(sql)
-		spew.Dump(values)
 		_, err = db.Exec(sql, values...)
 		if merr, ok := err.(*mysql.MySQLError); ok && merr.Number == 1146 {
 			var cb strings.Builder
