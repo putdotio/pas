@@ -1,4 +1,4 @@
-package pas
+package pas_test
 
 import (
 	"bytes"
@@ -7,11 +7,13 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/putdotio/pas/internal/pas"
 )
 
 const localDSN = "root@(127.0.0.1:3306)/test"
 
-var handler *Handler
+var handler *pas.Handler
 
 func init() {
 	db, err := sql.Open("mysql", localDSN)
@@ -19,9 +21,9 @@ func init() {
 		log.Fatal(err)
 	}
 
-	analytics := NewAnalytics(db)
+	analytics := pas.NewAnalytics(db)
 
-	handler = NewHandler(analytics)
+	handler = pas.NewHandler(analytics)
 }
 
 func TestPostEvents(t *testing.T) {
