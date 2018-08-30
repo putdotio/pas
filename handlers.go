@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/go-sql-driver/mysql"
 )
@@ -20,7 +21,11 @@ func handleEvents(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	now := time.Now().UTC()
 	for _, e := range events.Events {
+		if e.Timestamp == nil {
+			e.Timestamp = &now
+		}
 		sql, values := insertEvent(e)
 		_, err = db.Exec(sql, values...)
 		if merr, ok := err.(*mysql.MySQLError); ok {
