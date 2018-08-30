@@ -36,7 +36,7 @@ func createEventTable(e Event) string {
 		sb.WriteRune(' ')
 		sb.WriteString(p.DBType())
 	}
-	sb.WriteRune(')')
+	sb.WriteString(", index idx_userid_timestamp (user_id, timestamp), index idx_timestamp(timestamp))")
 	return sb.String()
 }
 
@@ -97,14 +97,14 @@ func insertUser(u User) (string, []interface{}) {
 func createUserTable(u User) string {
 	var sb strings.Builder
 	sb.WriteString("create table user")
-	sb.WriteString("(id varchar(255) not null")
+	sb.WriteString("(id varchar(255) not null, timestamp datetime") // TODO make timestamp not null
 	for _, p := range u.Properties {
 		sb.WriteRune(',')
 		sb.WriteString(string(p.Name))
 		sb.WriteRune(' ')
 		sb.WriteString(p.DBType())
 	}
-	sb.WriteRune(')')
+	sb.WriteString(", primary key (id), index idx_userid (id), index idx_timestamp(timestamp))")
 	return sb.String()
 }
 
