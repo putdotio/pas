@@ -16,7 +16,7 @@ type Event struct {
 
 type EventName string
 
-var eventNameRegex = regexp.MustCompile(`[a-z]+[a-z_0-9]*`)
+var eventNameRegex = regexp.MustCompile(`[a-z0-9]+_[a-z0-9]+`)
 
 func (n *EventName) UnmarshalJSON(b []byte) error {
 	var s string

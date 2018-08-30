@@ -22,7 +22,7 @@ func init() {
 func TestPostEvents(t *testing.T) {
 	s := `{
 		"events": [
-		{"name": "test", "user_id": "1234", "timestamp": "2000-01-01T01:02:03Z", "properties": [
+		{"name": "test_done", "user_id": "1234", "timestamp": "2000-01-01T01:02:03Z", "properties": [
 				{"name": "foo", "value": "bar", "type": "string"}
 		]}]}
 	`
