@@ -54,7 +54,7 @@ func TestInsertEvent(t *testing.T) {
 	assert.Equal(t, n, 1)
 
 	// will add column
-	e.Properties = append(e.Properties, pas.Property{
+	events[0].Properties = append(events[0].Properties, pas.Property{
 		Type:  pas.TypeString,
 		Name:  "bar",
 		Value: "test",
