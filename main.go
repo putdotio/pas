@@ -12,6 +12,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/putdotio/pas/internal/pas"
 	"github.com/rs/cors"
 )
 
@@ -29,7 +30,7 @@ var (
 	configPath = flag.String("config", "config.toml", "config file path")
 	config     Config
 	server     http.Server
-	db         *sql.DB
+	analytics  *pas.Analytics
 )
 
 func main() {
@@ -43,10 +44,13 @@ func main() {
 		log.Fatal(err)
 	}
 
-	db, err = sql.Open("mysql", config.MySQLDSN)
+	db, err := sql.Open("mysql", config.MySQLDSN)
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer db.Close()
+
+	analytics = pas.NewAnalytics(db)
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/events", handleEvents)

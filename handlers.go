@@ -3,11 +3,12 @@ package main
 import (
 	"encoding/json"
 	"net/http"
-	"time"
+
+	"github.com/putdotio/pas/internal/pas"
 )
 
 type Events struct {
-	Events []Event `json:"events"`
+	Events []pas.Event `json:"events"`
 }
 
 func handleEvents(w http.ResponseWriter, r *http.Request) {
@@ -18,19 +19,15 @@ func handleEvents(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	now := time.Now().UTC()
-	for _, e := range events.Events {
-		i := EventInserter{e}
-		err = runInserter(i, now)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
+	_, err = analytics.InsertEvents(events.Events)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 }
 
 type Users struct {
-	Users []User `json:"users"`
+	Users []pas.User `json:"users"`
 }
 
 func handleUsers(w http.ResponseWriter, r *http.Request) {
@@ -41,13 +38,9 @@ func handleUsers(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	now := time.Now().UTC()
-	for _, u := range users.Users {
-		i := UserInserter{u}
-		err = runInserter(i, now)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
+	_, err = analytics.UpdateUsers(users.Users)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 }
