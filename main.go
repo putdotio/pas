@@ -6,14 +6,12 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
 	"github.com/putdotio/pas/internal/pas"
-	"github.com/rs/cors"
 )
 
 // Version of application
@@ -28,9 +26,6 @@ func init() {
 var (
 	version    = flag.Bool("version", false, "version")
 	configPath = flag.String("config", "config.toml", "config file path")
-	config     Config
-	server     http.Server
-	analytics  *pas.Analytics
 )
 
 func main() {
@@ -39,7 +34,7 @@ func main() {
 		fmt.Println(Version)
 	}
 
-	err := config.Read()
+	config, err := NewConfig()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -48,23 +43,18 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	analytics = pas.NewAnalytics(db)
-
-	mux := http.NewServeMux()
-	mux.HandleFunc("/api/events", handleEvents)
-	mux.HandleFunc("/api/users", handleUsers)
-
-	server.Addr = config.ListenAddress
-	server.Handler = cors.Default().Handler(mux)
-
-	go func() {
-		err = server.ListenAndServe()
-		if err == http.ErrServerClosed {
-			return
+	defer func() {
+		err = db.Close()
+		if err != nil {
+			log.Fatal(err)
 		}
-		log.Fatal(err)
 	}()
+
+	analytics := pas.NewAnalytics(db)
+	handler := pas.NewHandler(analytics)
+	server := pas.NewServer(config.ListenAddress, handler)
+
+	go server.ListenAndServe()
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
@@ -77,9 +67,5 @@ func main() {
 	err = server.Shutdown(ctx)
 	if err != nil {
 		log.Fatal("shutdown error:", err)
-	}
-	err = db.Close()
-	if err != nil {
-		log.Fatal(err)
 	}
 }

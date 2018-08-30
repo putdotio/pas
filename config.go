@@ -15,17 +15,18 @@ type Config struct {
 	MySQLDSN string
 }
 
-func (c *Config) Read() error {
+func NewConfig() (*Config, error) {
+	c := new(Config)
 	_, err := toml.DecodeFile(*configPath, c)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	err = envconfig.Process("", c)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	c.setDefaults()
-	return nil
+	return c, nil
 }
 
 func (c *Config) setDefaults() {

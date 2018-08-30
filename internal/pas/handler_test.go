@@ -1,6 +1,4 @@
-// +build ignore
-
-package main
+package pas
 
 import (
 	"bytes"
@@ -13,12 +11,17 @@ import (
 
 const localDSN = "root@(127.0.0.1:3306)/test"
 
+var handler *Handler
+
 func init() {
-	var err error
-	db, err = sql.Open("mysql", localDSN)
+	db, err := sql.Open("mysql", localDSN)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	analytics := NewAnalytics(db)
+
+	handler = NewHandler(analytics)
 }
 
 func TestPostEvents(t *testing.T) {
@@ -34,7 +37,6 @@ func TestPostEvents(t *testing.T) {
 		t.Fatal(err)
 	}
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(handleEvents)
 	handler.ServeHTTP(rr, req)
 	if status := rr.Code; status != http.StatusOK {
 		t.Log(rr.Body.String())
@@ -56,7 +58,6 @@ func TestPostUsers(t *testing.T) {
 		t.Fatal(err)
 	}
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(handleUsers)
 	handler.ServeHTTP(rr, req)
 	if status := rr.Code; status != http.StatusOK {
 		t.Log(rr.Body.String())
