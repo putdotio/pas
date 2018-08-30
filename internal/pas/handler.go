@@ -21,13 +21,13 @@ func NewHandler(analytics *Analytics) *Handler {
 	return h
 }
 
-type Events struct {
+type eventsRequest struct {
 	Events []Event `json:"events"`
 }
 
 func (s *Handler) handleEvents(w http.ResponseWriter, r *http.Request) {
 	dec := json.NewDecoder(r.Body)
-	var events Events
+	var events eventsRequest
 	err := dec.Decode(&events)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -40,13 +40,13 @@ func (s *Handler) handleEvents(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-type Users struct {
+type usersRequest struct {
 	Users []User `json:"users"`
 }
 
 func (s *Handler) handleUsers(w http.ResponseWriter, r *http.Request) {
 	dec := json.NewDecoder(r.Body)
-	var users Users
+	var users usersRequest
 	err := dec.Decode(&users)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
