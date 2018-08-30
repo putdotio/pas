@@ -82,7 +82,7 @@ func existingEventColumns(table string) (map[string]struct{}, error) {
 
 func insertUser(u User, t time.Time) (string, []interface{}) {
 	var sb strings.Builder
-	sb.WriteString("insert into user") // TODO upsert
+	sb.WriteString("insert into user")
 	sb.WriteString("(id, timestamp")
 	for _, p := range u.Properties {
 		sb.WriteRune(',')
@@ -92,12 +92,21 @@ func insertUser(u User, t time.Time) (string, []interface{}) {
 	for range u.Properties {
 		sb.WriteString(",?")
 	}
-	sb.WriteRune(')')
-	values := make([]interface{}, len(u.Properties)+2)
+	sb.WriteString(") on duplicate key update timestamp = ?")
+	for _, p := range u.Properties {
+		sb.WriteRune(',')
+		sb.WriteString(string(p.Name))
+		sb.WriteString("=?")
+	}
+	values := make([]interface{}, 2*len(u.Properties)+3)
 	values[0] = string(u.ID)
 	values[1] = t
 	for i := range u.Properties {
 		values[i+2] = u.Properties[i].Value
+	}
+	values[len(u.Properties)+2] = t
+	for i := range u.Properties {
+		values[i+len(u.Properties)+3] = u.Properties[i].Value
 	}
 	return sb.String(), values
 }
