@@ -11,7 +11,7 @@ type Config struct {
 	ListenAddress string
 	// Give some time to unfinished HTTP requests before shutting down the server (milliseconds).
 	ShutdownTimeout uint
-
+	// MySQL database DSN.
 	MySQLDSN string
 }
 
