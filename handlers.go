@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/go-sql-driver/mysql"
@@ -40,7 +39,7 @@ func handleEvents(w http.ResponseWriter, r *http.Request) {
 				}
 				_, err = db.Exec(sql, values...)
 			} else if merr.Number == 1054 { // unknown column
-				cols, err2 := existingColumns(string(e.Name))
+				cols, err2 := existingEventColumns(string(e.Name))
 				if err2 != nil {
 					http.Error(w, err2.Error(), http.StatusInternalServerError)
 					return
@@ -75,88 +74,35 @@ func handleUsers(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	for _, e := range users.Users {
-		var sb strings.Builder
-		sb.WriteString("insert into user")
-		sb.WriteString("(id")
-		for _, p := range e.Properties {
-			sb.WriteRune(',')
-			sb.WriteString(string(p.Name))
-		}
-		sb.WriteString(") values (?")
-		for range e.Properties {
-			sb.WriteString(",?")
-		}
-		sb.WriteRune(')')
-		values := make([]interface{}, len(e.Properties)+1)
-		values[0] = string(e.ID)
-		for i := range e.Properties {
-			values[i+1] = e.Properties[i].Value
-		}
-		sql := sb.String()
+	for _, u := range users.Users {
+		sql, values := insertUser(u)
 		_, err = db.Exec(sql, values...)
-		if merr, ok := err.(*mysql.MySQLError); ok && merr.Number == 1146 {
-			var cb strings.Builder
-			cb.WriteString("create table user")
-			cb.WriteString("(id varchar(255) not null")
-			for _, p := range e.Properties {
-				cb.WriteRune(',')
-				cb.WriteString(string(p.Name))
-				cb.WriteRune(' ')
-				cb.WriteString(p.DBType())
-			}
-			cb.WriteRune(')')
-			_, err = db.Exec(cb.String())
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-			_, err = db.Exec(sql, values...)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-		} else if merr, ok := err.(*mysql.MySQLError); ok && merr.Number == 1054 {
-			rows, err2 := db.Query("select column_name from information_schema.columns where table_name = user and column_name not in ('id')")
-			if err2 != nil {
-				http.Error(w, err2.Error(), http.StatusInternalServerError)
-				return
-			}
-			existingColumns := make(map[string]struct{})
-			for rows.Next() {
-				var col string
-				err = rows.Scan(&col)
+		if merr, ok := err.(*mysql.MySQLError); ok {
+			if merr.Number == 1146 { // table doesn't exist
+				_, err = db.Exec(createUserTable(u))
+				if merr, ok = err.(*mysql.MySQLError); ok && merr.Number == 1050 { // table already exists
+					err = nil
+				}
 				if err != nil {
 					http.Error(w, err.Error(), http.StatusInternalServerError)
 					return
 				}
-				existingColumns[col] = struct{}{}
-			}
-			err = rows.Err()
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-			var ab strings.Builder
-			ab.WriteString("alter table user ")
-			for _, p := range e.Properties {
-				_, ok := existingColumns[string(p.Name)]
-				if !ok {
-					ab.WriteString(" add column ")
-					ab.WriteString(string(p.Name))
-					ab.WriteRune(' ')
-					ab.WriteString(p.DBType())
+				_, err = db.Exec(sql, values...)
+			} else if merr.Number == 1054 { // unknown column
+				cols, err2 := existingUserColumns()
+				if err2 != nil {
+					http.Error(w, err2.Error(), http.StatusInternalServerError)
+					return
 				}
-			}
-			_, err = db.Exec(ab.String())
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-			_, err = db.Exec(sql, values...)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
+				_, err = db.Exec(alterUserTable(u, cols))
+				if merr, ok = err.(*mysql.MySQLError); ok && merr.Number == 1060 { // duplicate column name
+					err = nil
+				}
+				if err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+					return
+				}
+				_, err = db.Exec(sql, values...)
 			}
 		}
 		if err != nil {
