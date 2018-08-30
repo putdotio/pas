@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestInsertEvent(t *testing.T) {
+func TestInsertEvents(t *testing.T) {
 	db, err := sql.Open("mysql", localDSN)
 	if err != nil {
 		log.Fatal(err)
@@ -60,6 +60,59 @@ func TestInsertEvent(t *testing.T) {
 		Value: "test",
 	})
 	n, err = analytics.InsertEvents(events)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, n, 1)
+}
+
+func TestUpdateUsers(t *testing.T) {
+	db, err := sql.Open("mysql", localDSN)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	analytics := pas.NewAnalytics(db)
+
+	_, err = db.Exec("drop table if exists user")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	u := pas.User{
+		ID: pas.UserID(1234),
+		Properties: []pas.Property{
+			{
+				Type:  pas.TypeInteger,
+				Name:  "foo",
+				Value: 1,
+			},
+		},
+	}
+	users := []pas.User{u}
+
+	// will create table
+	n, err := analytics.UpdateUsers(users)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, n, 1)
+
+	// will insert
+	n, err = analytics.UpdateUsers(users)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, n, 1)
+
+	// will add column
+	users[0].Properties = append(users[0].Properties, pas.Property{
+		Type:  pas.TypeString,
+		Name:  "bar",
+		Value: "test",
+	})
+	n, err = analytics.UpdateUsers(users)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -58,7 +58,7 @@ func (i userInserter) CreateTableSQL() string {
 }
 
 func (i userInserter) ExistingColumns(db *sql.DB) (map[string]struct{}, error) {
-	rows, err := db.Query("select column_name from information_schema.columns where table_name = user and column_name != id")
+	rows, err := db.Query("select column_name from information_schema.columns where table_name = 'user' and column_name != 'id'")
 	if err != nil {
 		return nil, err
 	}

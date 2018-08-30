@@ -51,7 +51,7 @@ func TestPostUsers(t *testing.T) {
 	s := `{
 		"users": [
 		{"id": "1234", "properties": [
-				{"name": "foo", "value": "bar", "type": "string"}
+				{"name": "foo", "value": 1, "type": "string"}
 		]}]}
 	`
 	var postBody = bytes.NewBufferString(s)

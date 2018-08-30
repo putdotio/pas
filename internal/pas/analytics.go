@@ -17,32 +17,30 @@ func NewAnalytics(db *sql.DB) *Analytics {
 	}
 }
 
-func (p *Analytics) InsertEvents(events []Event) (int, error) {
-	var n int
+func (p *Analytics) InsertEvents(events []Event) (n int, err error) {
 	now := time.Now().UTC()
 	for _, e := range events {
 		i := eventInserter{e}
-		err := p.insert(i, now)
+		err = p.insert(i, now)
 		if err != nil {
 			break
 		}
 		n++
 	}
-	return n, nil
+	return
 }
 
-func (p *Analytics) UpdateUsers(users []User) (int, error) {
-	var n int
+func (p *Analytics) UpdateUsers(users []User) (n int, err error) {
 	now := time.Now().UTC()
 	for _, u := range users {
 		i := userInserter{u}
-		err := p.insert(i, now)
+		err = p.insert(i, now)
 		if err != nil {
 			break
 		}
 		n++
 	}
-	return n, nil
+	return
 }
 
 func (p *Analytics) insert(i inserter, t time.Time) error {
