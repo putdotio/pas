@@ -21,7 +21,7 @@ func (p *Analytics) InsertEvents(events []Event) (int, error) {
 	var n int
 	now := time.Now().UTC()
 	for _, e := range events {
-		i := EventInserter{e}
+		i := eventInserter{e}
 		err := p.insert(i, now)
 		if err != nil {
 			break
@@ -35,7 +35,7 @@ func (p *Analytics) UpdateUsers(users []User) (int, error) {
 	var n int
 	now := time.Now().UTC()
 	for _, u := range users {
-		i := UserInserter{u}
+		i := userInserter{u}
 		err := p.insert(i, now)
 		if err != nil {
 			break
@@ -45,7 +45,7 @@ func (p *Analytics) UpdateUsers(users []User) (int, error) {
 	return n, nil
 }
 
-func (p *Analytics) insert(i Inserter, t time.Time) error {
+func (p *Analytics) insert(i inserter, t time.Time) error {
 	sql, values := i.InsertSQL(t)
 	_, err := p.db.Exec(sql, values...)
 	if merr, ok := err.(*mysql.MySQLError); ok {

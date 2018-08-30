@@ -6,11 +6,11 @@ import (
 	"time"
 )
 
-type EventInserter struct {
+type eventInserter struct {
 	e Event
 }
 
-func (i EventInserter) InsertSQL(t time.Time) (string, []interface{}) {
+func (i eventInserter) InsertSQL(t time.Time) (string, []interface{}) {
 	e := i.e
 	var sb strings.Builder
 	sb.WriteString("insert into ")
@@ -38,7 +38,7 @@ func (i EventInserter) InsertSQL(t time.Time) (string, []interface{}) {
 	return sb.String(), values
 }
 
-func (i EventInserter) CreateTableSQL() string {
+func (i eventInserter) CreateTableSQL() string {
 	e := i.e
 	var sb strings.Builder
 	sb.WriteString("create table ")
@@ -48,13 +48,13 @@ func (i EventInserter) CreateTableSQL() string {
 		sb.WriteRune(',')
 		sb.WriteString(string(p.Name))
 		sb.WriteRune(' ')
-		sb.WriteString(p.DBType())
+		sb.WriteString(p.dbType())
 	}
 	sb.WriteString(", index idx_userid_timestamp (user_id, timestamp), index idx_timestamp(timestamp))")
 	return sb.String()
 }
 
-func (i EventInserter) ExistingColumns(db *sql.DB) (map[string]struct{}, error) {
+func (i eventInserter) ExistingColumns(db *sql.DB) (map[string]struct{}, error) {
 	table := string(i.e.Name)
 	rows, err := db.Query("select column_name from information_schema.columns where table_name = ? and column_name not in ('user_id', 'timestamp')", table)
 	if err != nil {
@@ -72,7 +72,7 @@ func (i EventInserter) ExistingColumns(db *sql.DB) (map[string]struct{}, error) 
 	return existingColumns, rows.Err()
 }
 
-func (i EventInserter) AlterTableSQL(existingColumns map[string]struct{}) string {
+func (i eventInserter) AlterTableSQL(existingColumns map[string]struct{}) string {
 	e := i.e
 	var sb strings.Builder
 	sb.WriteString("alter table ")
@@ -83,7 +83,7 @@ func (i EventInserter) AlterTableSQL(existingColumns map[string]struct{}) string
 			sb.WriteString(" add column ")
 			sb.WriteString(string(p.Name))
 			sb.WriteRune(' ')
-			sb.WriteString(p.DBType())
+			sb.WriteString(p.dbType())
 		}
 	}
 	return sb.String()

@@ -6,11 +6,11 @@ import (
 	"time"
 )
 
-type UserInserter struct {
+type userInserter struct {
 	u User
 }
 
-func (i UserInserter) InsertSQL(t time.Time) (string, []interface{}) {
+func (i userInserter) InsertSQL(t time.Time) (string, []interface{}) {
 	u := i.u
 	var sb strings.Builder
 	sb.WriteString("insert into user")
@@ -42,7 +42,7 @@ func (i UserInserter) InsertSQL(t time.Time) (string, []interface{}) {
 	return sb.String(), values
 }
 
-func (i UserInserter) CreateTableSQL() string {
+func (i userInserter) CreateTableSQL() string {
 	u := i.u
 	var sb strings.Builder
 	sb.WriteString("create table user")
@@ -51,13 +51,13 @@ func (i UserInserter) CreateTableSQL() string {
 		sb.WriteRune(',')
 		sb.WriteString(string(p.Name))
 		sb.WriteRune(' ')
-		sb.WriteString(p.DBType())
+		sb.WriteString(p.dbType())
 	}
 	sb.WriteString(", primary key (id), index idx_userid (id), index idx_timestamp(timestamp))")
 	return sb.String()
 }
 
-func (i UserInserter) ExistingColumns(db *sql.DB) (map[string]struct{}, error) {
+func (i userInserter) ExistingColumns(db *sql.DB) (map[string]struct{}, error) {
 	rows, err := db.Query("select column_name from information_schema.columns where table_name = user and column_name != id")
 	if err != nil {
 		return nil, err
@@ -74,7 +74,7 @@ func (i UserInserter) ExistingColumns(db *sql.DB) (map[string]struct{}, error) {
 	return existingColumns, rows.Err()
 }
 
-func (i UserInserter) AlterTableSQL(existingColumns map[string]struct{}) string {
+func (i userInserter) AlterTableSQL(existingColumns map[string]struct{}) string {
 	u := i.u
 	var sb strings.Builder
 	sb.WriteString("alter table user ")
@@ -84,7 +84,7 @@ func (i UserInserter) AlterTableSQL(existingColumns map[string]struct{}) string 
 			sb.WriteString(" add column ")
 			sb.WriteString(string(p.Name))
 			sb.WriteRune(' ')
-			sb.WriteString(p.DBType())
+			sb.WriteString(p.dbType())
 		}
 	}
 	return sb.String()

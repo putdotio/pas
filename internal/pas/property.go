@@ -36,7 +36,7 @@ type Property struct {
 	Value interface{}  `json:"value"`
 }
 
-func (p Property) DBType() string {
+func (p Property) dbType() string {
 	return propertyTypes[p.Type]
 }
 

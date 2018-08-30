@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-type Inserter interface {
+type inserter interface {
 	InsertSQL(timestamp time.Time) (sql string, values []interface{})
 	CreateTableSQL() string
 	ExistingColumns(*sql.DB) (map[string]struct{}, error)
