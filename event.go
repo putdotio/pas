@@ -14,21 +14,6 @@ type Event struct {
 	Properties []Property `json:"properties"`
 }
 
-type UserID string
-
-func (u *UserID) UnmarshalJSON(b []byte) error {
-	var s string
-	err := json.Unmarshal(b, &s)
-	if err != nil {
-		return err
-	}
-	if len(s) > 255 {
-		return errors.New("user_id too big")
-	}
-	*u = UserID(s)
-	return nil
-}
-
 type EventName string
 
 var eventNameRegex = regexp.MustCompile(`[a-z]+[a-z_0-9]*`)
