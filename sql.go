@@ -75,7 +75,7 @@ func existingEventColumns(table string) (map[string]struct{}, error) {
 
 func insertUser(u User) (string, []interface{}) {
 	var sb strings.Builder
-	sb.WriteString("insert into user")
+	sb.WriteString("insert into user") // TODO upsert
 	sb.WriteString("(id")
 	for _, p := range u.Properties {
 		sb.WriteRune(',')
