@@ -35,6 +35,31 @@ func TestInsertEvents(t *testing.T) {
 				Name:  "foo",
 				Value: 1,
 			},
+			{
+				Type:  pas.TypeString,
+				Name:  "type_string",
+				Value: "test",
+			},
+			{
+				Type:  pas.TypeBoolean,
+				Name:  "type_boolean",
+				Value: true,
+			},
+			{
+				Type:  pas.TypeFloat,
+				Name:  "type_float",
+				Value: 123.456,
+			},
+			{
+				Type:  pas.TypeDecimal,
+				Name:  "type_decimal",
+				Value: 123.456,
+			},
+			{
+				Type:  pas.TypeDateTime,
+				Name:  "type_datetime",
+				Value: "2010-02-03T01:02:03",
+			},
 		},
 	}
 	events := []pas.Event{e}
