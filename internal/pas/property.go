@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"regexp"
+	"strconv"
 )
 
 const (
@@ -22,8 +23,8 @@ var propertyTypes = map[PropertyType]string{
 	TypeString:     "varchar(2000)",
 	TypeInteger:    "int",
 	TypeBigInteger: "bigint",
-	TypeFloat:      "float",
-	TypeDouble:     "double",
+	TypeFloat:      "float(23, 2)",
+	TypeDouble:     "double(53, 2)",
 	TypeDecimal:    "decimal",
 	TypeBoolean:    "tinyint(1)",
 	TypeDate:       "date",
@@ -31,13 +32,19 @@ var propertyTypes = map[PropertyType]string{
 }
 
 type Property struct {
-	Type  PropertyType `json:"type"`
-	Name  PropertyName `json:"name"`
-	Value interface{}  `json:"value"`
+	Type      PropertyType `json:"type"`
+	Name      PropertyName `json:"name"`
+	Value     interface{}  `json:"value"`
+	Precision int          `json:"precision"`
+	Scale     int          `json:"scale"`
 }
 
 func (p Property) dbType() string {
-	return propertyTypes[p.Type]
+	t := propertyTypes[p.Type]
+	if p.Type == TypeDecimal {
+		return t + "(" + strconv.Itoa(p.Precision) + "," + strconv.Itoa(p.Scale) + ")"
+	}
+	return t
 }
 
 type PropertyName string
