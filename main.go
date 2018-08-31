@@ -32,6 +32,7 @@ func main() {
 	flag.Parse()
 	if *version {
 		fmt.Println(Version)
+		return
 	}
 
 	config, err := NewConfig()
