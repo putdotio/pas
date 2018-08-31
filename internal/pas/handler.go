@@ -17,6 +17,7 @@ func NewHandler(analytics *Analytics) *Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/events", h.handleEvents)
 	mux.HandleFunc("/api/users", h.handleUsers)
+	mux.HandleFunc("/health", h.handleHealth)
 	h.Handler = mux
 	return h
 }
@@ -53,6 +54,14 @@ func (s *Handler) handleUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	_, err = s.analytics.UpdateUsers(users.Users)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (s *Handler) handleHealth(w http.ResponseWriter, r *http.Request) {
+	err := s.analytics.Health()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

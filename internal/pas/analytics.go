@@ -73,3 +73,7 @@ func (p *Analytics) insert(i inserter, t time.Time) error {
 	}
 	return err
 }
+
+func (p *Analytics) Health() error {
+	return p.db.Ping()
+}
