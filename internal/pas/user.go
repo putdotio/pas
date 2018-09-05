@@ -7,6 +7,7 @@ import (
 
 type User struct {
 	ID         UserID     `json:"id"`
+	Hash       string     `json:"hash"`
 	Properties []Property `json:"properties"`
 }
 

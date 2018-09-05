@@ -9,6 +9,7 @@ import (
 
 type Event struct {
 	UserID     UserID     `json:"user_id"`
+	UserHash   string     `json:"user_hash"`
 	Timestamp  *time.Time `json:"timestamp"`
 	Name       EventName  `json:"name"`
 	Properties []Property `json:"properties"`

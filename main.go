@@ -52,7 +52,7 @@ func main() {
 	}()
 
 	analytics := pas.NewAnalytics(db)
-	handler := pas.NewHandler(analytics)
+	handler := pas.NewHandler(analytics, config.Secret)
 	server := pas.NewServer(config.ListenAddress, handler)
 
 	go server.ListenAndServe()

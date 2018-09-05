@@ -13,6 +13,8 @@ type Config struct {
 	ShutdownTimeout uint
 	// MySQL database DSN.
 	MySQLDSN string
+	// Secret for signing user IDs.
+	Secret string
 }
 
 func NewConfig() (*Config, error) {
