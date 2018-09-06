@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/putdotio/pas/internal/property"
-	"github.com/putdotio/pas/internal/sqlinserter"
+	"github.com/putdotio/pas/internal/inserter"
 	"github.com/putdotio/pas/internal/user"
 )
 
@@ -15,7 +15,7 @@ type UserInserter struct {
 	User user.User
 }
 
-var _ sqlinserter.Inserter = (*UserInserter)(nil)
+var _ inserter.Inserter = (*UserInserter)(nil)
 
 func (i UserInserter) InsertSQL(def property.Types, t time.Time) (string, []interface{}, error) {
 	u := i.User

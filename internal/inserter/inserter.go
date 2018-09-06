@@ -1,4 +1,4 @@
-package sqlinserter
+package inserter
 
 import (
 	"database/sql"

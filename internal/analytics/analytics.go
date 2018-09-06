@@ -6,11 +6,11 @@ import (
 	"time"
 
 	"github.com/putdotio/pas/internal/event"
-	"github.com/putdotio/pas/internal/eventinserter"
+	"github.com/putdotio/pas/internal/inserter"
+	"github.com/putdotio/pas/internal/inserter/eventinserter"
+	"github.com/putdotio/pas/internal/inserter/userinserter"
 	"github.com/putdotio/pas/internal/property"
-	"github.com/putdotio/pas/internal/sqlinserter"
 	"github.com/putdotio/pas/internal/user"
-	"github.com/putdotio/pas/internal/userinserter"
 )
 
 type Analytics struct {
@@ -60,12 +60,12 @@ func (p *Analytics) insertEvent(e event.Event, t time.Time) error {
 		return errors.New("unknown event name: " + string(e.Name))
 	}
 	i := eventinserter.EventInserter{Event: e}
-	return sqlinserter.Insert(i, t, p.db, def)
+	return inserter.Insert(i, t, p.db, def)
 }
 
 func (p *Analytics) insertUser(u user.User, t time.Time) error {
 	i := userinserter.UserInserter{User: u}
-	return sqlinserter.Insert(i, t, p.db, p.schema.user)
+	return inserter.Insert(i, t, p.db, p.schema.user)
 }
 
 func (p *Analytics) Health() error {

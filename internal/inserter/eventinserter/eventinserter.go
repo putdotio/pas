@@ -8,14 +8,14 @@ import (
 
 	"github.com/putdotio/pas/internal/event"
 	"github.com/putdotio/pas/internal/property"
-	"github.com/putdotio/pas/internal/sqlinserter"
+	"github.com/putdotio/pas/internal/inserter"
 )
 
 type EventInserter struct {
 	Event event.Event
 }
 
-var _ sqlinserter.Inserter = (*EventInserter)(nil)
+var _ inserter.Inserter = (*EventInserter)(nil)
 
 func (i EventInserter) InsertSQL(def property.Types, t time.Time) (string, []interface{}, error) {
 	e := i.Event
