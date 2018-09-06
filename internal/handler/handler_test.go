@@ -1,4 +1,4 @@
-package pas_test
+package handler_test
 
 import (
 	"bytes"
@@ -12,30 +12,34 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/putdotio/pas/internal/pas"
+	"github.com/putdotio/pas/internal/analytics"
+	"github.com/putdotio/pas/internal/event"
+	"github.com/putdotio/pas/internal/handler"
+	"github.com/putdotio/pas/internal/property"
 )
 
 const localDSN = "root@(127.0.0.1:3306)/test"
 
-var handler *pas.Handler
-
-func init() {
+func TestPostEvents(t *testing.T) {
 	db, err := sql.Open("mysql", localDSN)
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer db.Close()
 
-	analytics := pas.NewAnalytics(db)
+	events := map[event.Name]property.Types{
+		"test_done": property.Types{
+			"foo": property.Must(property.New("string")),
+		},
+	}
+	analytics := analytics.New(db, nil, events)
+	handler := handler.New(analytics, "")
 
-	handler = pas.NewHandler(analytics, "")
-}
-
-func TestPostEvents(t *testing.T) {
 	s := `{
 		"events": [
-		{"name": "test_done", "user_id": "1234", "timestamp": "2000-01-01T01:02:03Z", "properties": [
-				{"name": "foo", "value": "bar", "type": "string"}
-		]}]}
+		{"name": "test_done", "user_id": "1234", "timestamp": "2000-01-01T01:02:03Z", "properties": {
+				"foo": "bar"
+		}}]}
 	`
 	var postBody = bytes.NewBufferString(s)
 	req, err := http.NewRequest("POST", "/api/events", postBody)
@@ -52,11 +56,23 @@ func TestPostEvents(t *testing.T) {
 }
 
 func TestPostUsers(t *testing.T) {
+	db, err := sql.Open("mysql", localDSN)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	user := property.Types{
+		"foo": property.Must(property.New("integer")),
+	}
+	analytics := analytics.New(db, user, nil)
+	handler := handler.New(analytics, "")
+
 	s := `{
 		"users": [
-		{"id": "1234", "properties": [
-				{"name": "foo", "value": 1, "type": "string"}
-		]}]}
+		{"id": "1234", "properties": {
+				"foo": 1
+		}}]}
 	`
 	var postBody = bytes.NewBufferString(s)
 	req, err := http.NewRequest("POST", "/api/users", postBody)
@@ -81,15 +97,19 @@ func TestUserHash(t *testing.T) {
 	}
 	defer db.Close()
 
-	analytics := pas.NewAnalytics(db)
-
-	handler := pas.NewHandler(analytics, secret)
+	events := map[event.Name]property.Types{
+		"test_done": property.Types{
+			"foo": property.Must(property.New("string")),
+		},
+	}
+	analytics := analytics.New(db, nil, events)
+	handler := handler.New(analytics, secret)
 
 	s0 := `{
 		"events": [
-		{"name": "test_done", "user_id": "1234", "user_hash": "%s", "timestamp": "2000-01-01T01:02:03Z", "properties": [
-				{"name": "foo", "value": "bar", "type": "string"}
-		]}]}
+		{"name": "test_done", "user_id": "1234", "user_hash": "%s", "timestamp": "2000-01-01T01:02:03Z", "properties": {
+				"foo": "bar"
+		}}]}
 	`
 
 	// Test invalid secret

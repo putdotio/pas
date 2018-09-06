@@ -1,8 +1,12 @@
 package main
 
 import (
-	"github.com/BurntSushi/toml"
+	"os"
+
 	"github.com/kelseyhightower/envconfig"
+	"github.com/naoina/toml"
+	"github.com/putdotio/pas/internal/event"
+	"github.com/putdotio/pas/internal/property"
 )
 
 // Config for application
@@ -15,11 +19,21 @@ type Config struct {
 	MySQLDSN string
 	// Secret for signing user IDs.
 	Secret string
+	// Corresponds to the schema of user table.
+	User property.Types
+	// Corresponds to the schema of event tables.
+	Events map[event.Name]property.Types
 }
 
 func NewConfig() (*Config, error) {
 	c := new(Config)
-	_, err := toml.DecodeFile(*configPath, c)
+	f, err := os.Open(*configPath)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = f.Close() }()
+	dec := toml.NewDecoder(f)
+	err = dec.Decode(&c)
 	if err != nil {
 		return nil, err
 	}

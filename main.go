@@ -11,7 +11,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/putdotio/pas/internal/pas"
+	"github.com/putdotio/pas/internal/analytics"
+	"github.com/putdotio/pas/internal/handler"
+	"github.com/putdotio/pas/internal/server"
 )
 
 // Version of application
@@ -51,9 +53,9 @@ func main() {
 		}
 	}()
 
-	analytics := pas.NewAnalytics(db)
-	handler := pas.NewHandler(analytics, config.Secret)
-	server := pas.NewServer(config.ListenAddress, handler)
+	analytics := analytics.New(db, config.User, config.Events)
+	handler := handler.New(analytics, config.Secret)
+	server := server.New(config.ListenAddress, handler)
 
 	go server.ListenAndServe()
 

@@ -1,4 +1,4 @@
-package pas
+package server
 
 import (
 	"log"
@@ -11,7 +11,7 @@ type Server struct {
 	http.Server
 }
 
-func NewServer(addr string, handler http.Handler) *Server {
+func New(addr string, handler http.Handler) *Server {
 	return &Server{
 		Server: http.Server{
 			Addr:    addr,

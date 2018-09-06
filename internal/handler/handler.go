@@ -1,4 +1,4 @@
-package pas
+package handler
 
 import (
 	"crypto/hmac"
@@ -6,15 +6,19 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"net/http"
+
+	"github.com/putdotio/pas/internal/analytics"
+	"github.com/putdotio/pas/internal/event"
+	"github.com/putdotio/pas/internal/user"
 )
 
 type Handler struct {
 	http.Handler
-	analytics *Analytics
+	analytics *analytics.Analytics
 	secret    []byte
 }
 
-func NewHandler(analytics *Analytics, secret string) *Handler {
+func New(analytics *analytics.Analytics, secret string) *Handler {
 	h := &Handler{
 		analytics: analytics,
 		secret:    []byte(secret),
@@ -28,11 +32,12 @@ func NewHandler(analytics *Analytics, secret string) *Handler {
 }
 
 type eventsRequest struct {
-	Events []Event `json:"events"`
+	Events []event.Event `json:"events"`
 }
 
 func (s *Handler) handleEvents(w http.ResponseWriter, r *http.Request) {
 	dec := json.NewDecoder(r.Body)
+	dec.UseNumber()
 	var events eventsRequest
 	err := dec.Decode(&events)
 	if err != nil {
@@ -58,11 +63,12 @@ func (s *Handler) handleEvents(w http.ResponseWriter, r *http.Request) {
 }
 
 type usersRequest struct {
-	Users []User `json:"users"`
+	Users []user.User `json:"users"`
 }
 
 func (s *Handler) handleUsers(w http.ResponseWriter, r *http.Request) {
 	dec := json.NewDecoder(r.Body)
+	dec.UseNumber()
 	var users usersRequest
 	err := dec.Decode(&users)
 	if err != nil {

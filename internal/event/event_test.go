@@ -1,9 +1,10 @@
-package pas
+package event
 
 import (
 	"encoding/json"
 	"testing"
 
+	"github.com/putdotio/pas/internal/user"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -23,5 +24,5 @@ func TestEventUnmarshal(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, e.UserID, UserID("test"))
+	assert.Equal(t, e.UserID, user.ID("test"))
 }
