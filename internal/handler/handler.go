@@ -1,9 +1,6 @@
 package handler
 
 import (
-	"crypto/hmac"
-	"crypto/sha256"
-	"encoding/hex"
 	"encoding/json"
 	"net/http"
 
@@ -15,17 +12,16 @@ import (
 type Handler struct {
 	http.Handler
 	analytics *analytics.Analytics
-	secret    []byte
 }
 
-func New(analytics *analytics.Analytics, secret string) *Handler {
+func New(analytics *analytics.Analytics) *Handler {
 	h := &Handler{
 		analytics: analytics,
-		secret:    []byte(secret),
 	}
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/events", h.handleEvents)
 	mux.HandleFunc("/api/users", h.handleUsers)
+	mux.HandleFunc("/api/alias", h.handleAlias)
 	mux.HandleFunc("/health", h.handleHealth)
 	h.Handler = mux
 	return h
@@ -43,19 +39,6 @@ func (s *Handler) handleEvents(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
-	}
-	hash := hmac.New(sha256.New, s.secret)
-	for i, e := range events.Events {
-		if e.UserHash == nil {
-			events.Events[i].IsAnonymous = true
-			continue
-		}
-		hash.Write([]byte(e.UserID))
-		if hex.EncodeToString(hash.Sum(nil)) != *e.UserHash {
-			http.Error(w, "invalid user_hash", http.StatusBadRequest)
-			return
-		}
-		hash.Reset()
 	}
 	_, err = s.analytics.InsertEvents(events.Events)
 	if err != nil {
@@ -77,15 +60,6 @@ func (s *Handler) handleUsers(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	hash := hmac.New(sha256.New, s.secret)
-	for _, u := range users.Users {
-		hash.Write([]byte(u.ID))
-		if hex.EncodeToString(hash.Sum(nil)) != u.Hash {
-			http.Error(w, "invalid hash", http.StatusBadRequest)
-			return
-		}
-		hash.Reset()
-	}
 	_, err = s.analytics.UpdateUsers(users.Users)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -95,6 +69,27 @@ func (s *Handler) handleUsers(w http.ResponseWriter, r *http.Request) {
 
 func (s *Handler) handleHealth(w http.ResponseWriter, r *http.Request) {
 	err := s.analytics.Health()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+type aliasRequest struct {
+	UserID     user.ID `json:"user_id"`
+	UserHash   string  `json:"user_hash"`
+	PreviousID user.ID `json:"previous_id"`
+}
+
+func (s *Handler) handleAlias(w http.ResponseWriter, r *http.Request) {
+	dec := json.NewDecoder(r.Body)
+	var req aliasRequest
+	err := dec.Decode(&req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	err = s.analytics.Alias(req.PreviousID, req.UserID, req.UserHash)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

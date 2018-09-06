@@ -53,8 +53,8 @@ func main() {
 		}
 	}()
 
-	analytics := analytics.New(db, config.User, config.Events)
-	handler := handler.New(analytics, config.Secret)
+	analytics := analytics.New(db, config.Secret, config.User, config.Events)
+	handler := handler.New(analytics)
 	server := server.New(config.ListenAddress, handler)
 
 	go server.ListenAndServe()

@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/putdotio/pas/internal/property"
 	"github.com/putdotio/pas/internal/inserter"
+	"github.com/putdotio/pas/internal/property"
 	"github.com/putdotio/pas/internal/user"
 )
 

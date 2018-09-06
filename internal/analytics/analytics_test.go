@@ -1,7 +1,10 @@
 package analytics_test
 
 import (
+	"crypto/hmac"
+	"crypto/sha256"
 	"database/sql"
+	"encoding/hex"
 	"log"
 	"testing"
 	"time"
@@ -14,6 +17,7 @@ import (
 )
 
 const localDSN = "root@(127.0.0.1:3306)/test"
+const secret = "foobar"
 
 func TestInsertEvents(t *testing.T) {
 	db, err := sql.Open("mysql", localDSN)
@@ -33,7 +37,7 @@ func TestInsertEvents(t *testing.T) {
 		},
 	}
 
-	analytics := analytics.New(db, nil, types)
+	analytics := analytics.New(db, secret, nil, types)
 
 	_, err = db.Exec("drop table if exists page_viewed")
 	if err != nil {
@@ -42,7 +46,7 @@ func TestInsertEvents(t *testing.T) {
 
 	ts := time.Date(2000, 1, 2, 3, 4, 5, 6, time.UTC)
 	e := event.Event{
-		UserID:    user.ID(1234),
+		UserID:    "1234",
 		Timestamp: &ts,
 		Name:      "page_viewed",
 		Properties: map[property.Name]interface{}{
@@ -90,7 +94,7 @@ func TestUpdateUsers(t *testing.T) {
 	types := property.Types{
 		"foo": property.Must(property.New("integer")),
 	}
-	analytics := analytics.New(db, types, nil)
+	analytics := analytics.New(db, secret, types, nil)
 
 	_, err = db.Exec("drop table if exists user")
 	if err != nil {
@@ -98,7 +102,8 @@ func TestUpdateUsers(t *testing.T) {
 	}
 
 	u := user.User{
-		ID: user.ID(1234),
+		ID:   "1234",
+		Hash: generateUserHash("1234", secret),
 		Properties: map[property.Name]interface{}{
 			"foo": 1,
 		},
@@ -127,4 +132,68 @@ func TestUpdateUsers(t *testing.T) {
 		t.Fatal(err)
 	}
 	assert.Equal(t, n, 1)
+}
+
+func TestAlias(t *testing.T) {
+	db, err := sql.Open("mysql", localDSN)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	types := map[event.Name]property.Types{
+		"page_viewed": property.Types{
+			"foo": property.Must(property.New("integer")),
+		},
+	}
+
+	analytics := analytics.New(db, secret, nil, types)
+
+	_, err = db.Exec("drop table if exists page_viewed")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	e := event.Event{
+		UserID: "1",
+		Name:   "page_viewed",
+		Properties: map[property.Name]interface{}{
+			"foo": 1,
+		},
+	}
+	events := []event.Event{e}
+
+	n, err := analytics.InsertEvents(events)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, n, 1)
+
+	var userID string
+	var isAnonymous bool
+	row := db.QueryRow("select user_id, is_anonymous from page_viewed")
+	err = row.Scan(&userID, &isAnonymous)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.EqualValues(t, userID, "1")
+	assert.True(t, isAnonymous)
+
+	err = analytics.Alias("1", "2", generateUserHash("2", secret))
+	if err != nil {
+		t.Fatal(err)
+	}
+	row = db.QueryRow("select user_id, is_anonymous from page_viewed")
+	err = row.Scan(&userID, &isAnonymous)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.EqualValues(t, userID, "2")
+	assert.False(t, isAnonymous)
+}
+
+func generateUserHash(userID, secret string) string {
+	hash := hmac.New(sha256.New, []byte(secret))
+	hash.Write([]byte(userID))
+	return hex.EncodeToString(hash.Sum(nil))
 }
