@@ -12,10 +12,12 @@ import (
 
 type Event struct {
 	UserID     user.ID                       `json:"user_id"`
-	UserHash   string                        `json:"user_hash"`
+	UserHash   *string                       `json:"user_hash"`
 	Timestamp  *time.Time                    `json:"timestamp"`
 	Name       Name                          `json:"name"`
 	Properties map[property.Name]interface{} `json:"properties"`
+
+	IsAnonymous bool `json:"-"`
 }
 
 type Name string

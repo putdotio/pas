@@ -44,16 +44,18 @@ func (s *Handler) handleEvents(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	if len(s.secret) > 0 {
-		hash := hmac.New(sha256.New, s.secret)
-		for _, e := range events.Events {
-			hash.Write([]byte(e.UserID))
-			if hex.EncodeToString(hash.Sum(nil)) != e.UserHash {
-				http.Error(w, "invalid user_hash", http.StatusBadRequest)
-				return
-			}
-			hash.Reset()
+	hash := hmac.New(sha256.New, s.secret)
+	for i, e := range events.Events {
+		if e.UserHash == nil {
+			events.Events[i].IsAnonymous = true
+			continue
 		}
+		hash.Write([]byte(e.UserID))
+		if hex.EncodeToString(hash.Sum(nil)) != *e.UserHash {
+			http.Error(w, "invalid user_hash", http.StatusBadRequest)
+			return
+		}
+		hash.Reset()
 	}
 	_, err = s.analytics.InsertEvents(events.Events)
 	if err != nil {
@@ -75,16 +77,14 @@ func (s *Handler) handleUsers(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	if len(s.secret) > 0 {
-		hash := hmac.New(sha256.New, s.secret)
-		for _, u := range users.Users {
-			hash.Write([]byte(u.ID))
-			if hex.EncodeToString(hash.Sum(nil)) != u.Hash {
-				http.Error(w, "invalid user_hash", http.StatusBadRequest)
-				return
-			}
-			hash.Reset()
+	hash := hmac.New(sha256.New, s.secret)
+	for _, u := range users.Users {
+		hash.Write([]byte(u.ID))
+		if hex.EncodeToString(hash.Sum(nil)) != u.Hash {
+			http.Error(w, "invalid hash", http.StatusBadRequest)
+			return
 		}
+		hash.Reset()
 	}
 	_, err = s.analytics.UpdateUsers(users.Users)
 	if err != nil {

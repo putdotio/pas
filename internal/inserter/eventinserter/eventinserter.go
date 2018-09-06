@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/putdotio/pas/internal/event"
-	"github.com/putdotio/pas/internal/property"
 	"github.com/putdotio/pas/internal/inserter"
+	"github.com/putdotio/pas/internal/property"
 )
 
 type EventInserter struct {
@@ -22,14 +22,15 @@ func (i EventInserter) InsertSQL(def property.Types, t time.Time) (string, []int
 	var sb strings.Builder
 	sb.WriteString("insert into ")
 	sb.WriteString(string(e.Name))
-	sb.WriteString("(user_id, timestamp")
-	values := make([]interface{}, 0, len(e.Properties)+2)
+	sb.WriteString("(user_id, timestamp, is_anonymous")
+	values := make([]interface{}, 0, len(e.Properties)+3)
 	values = append(values, string(e.UserID))
 	if e.Timestamp != nil {
 		values = append(values, e.Timestamp)
 	} else {
 		values = append(values, t)
 	}
+	values = append(values, e.IsAnonymous)
 	for pname, pval := range e.Properties {
 		ptype, ok := def[pname]
 		if !ok {
@@ -43,7 +44,7 @@ func (i EventInserter) InsertSQL(def property.Types, t time.Time) (string, []int
 		}
 		values = append(values, val)
 	}
-	sb.WriteString(") values (?, ?")
+	sb.WriteString(") values (?, ?, ?")
 	for range e.Properties {
 		sb.WriteString(",?")
 	}
@@ -56,7 +57,7 @@ func (i EventInserter) CreateTableSQL(def property.Types) (string, error) {
 	var sb strings.Builder
 	sb.WriteString("create table ")
 	sb.WriteString(string(e.Name))
-	sb.WriteString("(user_id varchar(255) not null, timestamp datetime not null")
+	sb.WriteString("(user_id varchar(255) not null, timestamp datetime not null, is_anonymous tinyint(1) not null")
 	for pname := range e.Properties {
 		ptype, ok := def[pname]
 		if !ok {
@@ -73,7 +74,7 @@ func (i EventInserter) CreateTableSQL(def property.Types) (string, error) {
 
 func (i EventInserter) ExistingColumns(db *sql.DB) (map[string]struct{}, error) {
 	table := string(i.Event.Name)
-	rows, err := db.Query("select column_name from information_schema.columns where table_name = ? and column_name not in ('user_id', 'timestamp')", table)
+	rows, err := db.Query("select column_name from information_schema.columns where table_name = ? and column_name not in ('user_id', 'timestamp', 'is_anonymous')", table)
 	if err != nil {
 		return nil, err
 	}

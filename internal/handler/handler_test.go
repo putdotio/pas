@@ -56,6 +56,7 @@ func TestPostEvents(t *testing.T) {
 }
 
 func TestPostUsers(t *testing.T) {
+	const secret = "foobar"
 	db, err := sql.Open("mysql", localDSN)
 	if err != nil {
 		log.Fatal(err)
@@ -66,14 +67,15 @@ func TestPostUsers(t *testing.T) {
 		"foo": property.Must(property.New("integer")),
 	}
 	analytics := analytics.New(db, user, nil)
-	handler := handler.New(analytics, "")
+	handler := handler.New(analytics, secret)
 
 	s := `{
 		"users": [
-		{"id": "1234", "properties": {
+		{"id": "1234", "hash": "%s", "properties": {
 				"foo": 1
 		}}]}
 	`
+	s = fmt.Sprintf(s, generateUserHash("1234", secret))
 	var postBody = bytes.NewBufferString(s)
 	req, err := http.NewRequest("POST", "/api/users", postBody)
 	if err != nil {
