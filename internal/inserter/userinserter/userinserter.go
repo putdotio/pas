@@ -34,7 +34,7 @@ func (i UserInserter) InsertSQL(def property.Types, t time.Time) (string, []inte
 		sb.WriteString(string(pname))
 		val, err := ptype.ConvertValue(pval)
 		if err != nil {
-			return "", nil, err
+			return "", nil, errors.New("cannot read property (" + string(pname) + "): " + err.Error())
 		}
 		values = append(values, val)
 	}
