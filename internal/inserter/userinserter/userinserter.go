@@ -32,11 +32,15 @@ func (i UserInserter) InsertSQL(def property.Types, t time.Time) (string, []inte
 		}
 		sb.WriteRune(',')
 		sb.WriteString(string(pname))
-		val, err := ptype.ConvertValue(pval)
-		if err != nil {
-			return "", nil, errors.New("cannot read property (" + string(pname) + "): " + err.Error())
+		if pval != nil {
+			val, err := ptype.ConvertValue(pval)
+			if err != nil {
+				return "", nil, errors.New("cannot read property (" + string(pname) + "): " + err.Error())
+			}
+			values = append(values, val)
+		} else {
+			values = append(values, nil)
 		}
-		values = append(values, val)
 	}
 	sb.WriteString(") values (?, ?")
 	for range u.Properties {
@@ -48,11 +52,15 @@ func (i UserInserter) InsertSQL(def property.Types, t time.Time) (string, []inte
 		sb.WriteRune(',')
 		sb.WriteString(string(pname))
 		sb.WriteString("=?")
-		val, err := def[pname].ConvertValue(pval)
-		if err != nil {
-			return "", nil, err
+		if pval != nil {
+			val, err := def[pname].ConvertValue(pval)
+			if err != nil {
+				return "", nil, err
+			}
+			values = append(values, val)
+		} else {
+			values = append(values, nil)
 		}
-		values = append(values, val)
 	}
 	return sb.String(), values, nil
 }

@@ -38,11 +38,15 @@ func (i EventInserter) InsertSQL(def property.Types, t time.Time) (string, []int
 		}
 		sb.WriteRune(',')
 		sb.WriteString(string(pname))
-		val, err := ptype.ConvertValue(pval)
-		if err != nil {
-			return "", nil, errors.New("cannot read property (" + string(pname) + "): " + err.Error())
+		if pval != nil {
+			val, err := ptype.ConvertValue(pval)
+			if err != nil {
+				return "", nil, errors.New("cannot read property (" + string(pname) + "): " + err.Error())
+			}
+			values = append(values, val)
+		} else {
+			values = append(values, nil)
 		}
-		values = append(values, val)
 	}
 	sb.WriteString(") values (?, ?, ?")
 	for range e.Properties {
