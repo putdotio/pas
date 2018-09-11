@@ -110,7 +110,8 @@ func (i EventInserter) AlterTableSQL(existingColumns map[string]struct{}, def pr
 			sb.WriteString(string(pname))
 			sb.WriteRune(' ')
 			sb.WriteString(ptype.ColumnType())
+			sb.WriteRune(',')
 		}
 	}
-	return sb.String(), nil
+	return strings.TrimRight(sb.String(), ","), nil
 }
