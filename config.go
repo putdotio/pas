@@ -37,7 +37,7 @@ func NewConfig() (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = envconfig.Process("", c)
+	err = envconfig.Process("PAS", c)
 	if err != nil {
 		return nil, err
 	}
