@@ -27,6 +27,11 @@ func New(analytics *analytics.Analytics) *Handler {
 	return h
 }
 
+func successResponse(w http.ResponseWriter) {
+	w.Header().Set("content-type", "application/json")
+	_, _ = w.Write([]byte("{}"))
+}
+
 type eventsRequest struct {
 	Events []event.Event `json:"events"`
 }
@@ -45,6 +50,7 @@ func (s *Handler) handleEvents(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	successResponse(w)
 }
 
 type usersRequest struct {
@@ -65,6 +71,7 @@ func (s *Handler) handleUsers(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	successResponse(w)
 }
 
 func (s *Handler) handleHealth(w http.ResponseWriter, r *http.Request) {
@@ -73,6 +80,7 @@ func (s *Handler) handleHealth(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	successResponse(w)
 }
 
 type aliasRequest struct {
@@ -94,4 +102,5 @@ func (s *Handler) handleAlias(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	successResponse(w)
 }
