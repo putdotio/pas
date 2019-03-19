@@ -44,7 +44,7 @@ func (p *Analytics) InsertEvents(events []event.Event) (n int, err error) {
 			e.IsAnonymous = true
 		} else {
 			hash.Reset()
-			hash.Write([]byte(e.UserID))
+			_, _ = hash.Write([]byte(e.UserID))
 			if hex.EncodeToString(hash.Sum(nil)) != *e.UserHash {
 				err = errors.New("invalid user hash: " + *e.UserHash)
 				return
@@ -64,7 +64,7 @@ func (p *Analytics) UpdateUsers(users []user.User) (n int, err error) {
 	now := time.Now().UTC()
 	for _, u := range users {
 		hash.Reset()
-		hash.Write([]byte(u.ID))
+		_, _ = hash.Write([]byte(u.ID))
 		if hex.EncodeToString(hash.Sum(nil)) != u.Hash {
 			err = errors.New("invalid hash: " + u.Hash)
 			return
@@ -98,7 +98,7 @@ func (p *Analytics) Health() error {
 
 func (p *Analytics) Alias(previousID, userID user.ID, userHash string) error {
 	hash := hmac.New(sha256.New, p.secret)
-	hash.Write([]byte(userID))
+	_, _ = hash.Write([]byte(userID))
 	if hex.EncodeToString(hash.Sum(nil)) != userHash {
 		return errors.New("invalid hash: " + userHash)
 	}
