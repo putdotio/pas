@@ -92,6 +92,6 @@ func TestPostUsers(t *testing.T) {
 
 func generateUserHash(userID, secret string) string {
 	hash := hmac.New(sha256.New, []byte(secret))
-	hash.Write([]byte(userID))
+	_, _ = hash.Write([]byte(userID))
 	return hex.EncodeToString(hash.Sum(nil))
 }
