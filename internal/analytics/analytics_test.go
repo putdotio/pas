@@ -27,7 +27,7 @@ func TestInsertEvents(t *testing.T) {
 	defer db.Close()
 
 	types := map[event.Name]property.Types{
-		"page_viewed": property.Types{
+		"page_viewed": {
 			"foo":           property.Must(property.New("integer")),
 			"type_string":   property.Must(property.New("string")),
 			"type_boolean":  property.Must(property.New("boolean")),
@@ -142,7 +142,7 @@ func TestAlias(t *testing.T) {
 	defer db.Close()
 
 	types := map[event.Name]property.Types{
-		"page_viewed": property.Types{
+		"page_viewed": {
 			"foo": property.Must(property.New("integer")),
 		},
 	}
