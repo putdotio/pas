@@ -29,7 +29,7 @@ func TestPostEvents(t *testing.T) {
 	defer db.Close()
 
 	events := map[event.Name]property.Types{
-		"test_done": property.Types{
+		"test_done": {
 			"foo": property.Must(property.New("string")),
 		},
 	}
