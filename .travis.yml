@@ -3,10 +3,8 @@ sudo: required
 language: go
 services:
 - mysql
-before_install:
-- go get github.com/golang/dep/cmd/dep
 install:
-- dep ensure
+- go install
 before_script:
 - go build -ldflags="-X main.Version=$TRAVIS_TAG"
 - go get github.com/alecthomas/gometalinter
