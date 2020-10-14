@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 
-	"github.com/putdotio/pas/internal/property"
+	"pas/internal/property"
 )
 
 type User struct {

@@ -5,8 +5,8 @@ import (
 
 	"github.com/kelseyhightower/envconfig"
 	"github.com/naoina/toml"
-	"github.com/putdotio/pas/internal/event"
-	"github.com/putdotio/pas/internal/property"
+	"pas/internal/event"
+	"pas/internal/property"
 )
 
 // Config for application

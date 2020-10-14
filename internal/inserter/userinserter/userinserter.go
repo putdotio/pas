@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/putdotio/pas/internal/inserter"
-	"github.com/putdotio/pas/internal/property"
-	"github.com/putdotio/pas/internal/user"
+	"pas/internal/inserter"
+	"pas/internal/property"
+	"pas/internal/user"
 )
 
 type UserInserter struct {

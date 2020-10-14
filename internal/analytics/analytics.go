@@ -9,12 +9,12 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/putdotio/pas/internal/event"
-	"github.com/putdotio/pas/internal/inserter"
-	"github.com/putdotio/pas/internal/inserter/eventinserter"
-	"github.com/putdotio/pas/internal/inserter/userinserter"
-	"github.com/putdotio/pas/internal/property"
-	"github.com/putdotio/pas/internal/user"
+	"pas/internal/event"
+	"pas/internal/inserter"
+	"pas/internal/inserter/eventinserter"
+	"pas/internal/inserter/userinserter"
+	"pas/internal/property"
+	"pas/internal/user"
 )
 
 type Analytics struct {

@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/putdotio/pas/internal/analytics"
-	"github.com/putdotio/pas/internal/event"
-	"github.com/putdotio/pas/internal/user"
+	"pas/internal/analytics"
+	"pas/internal/event"
+	"pas/internal/user"
 )
 
 type Handler struct {

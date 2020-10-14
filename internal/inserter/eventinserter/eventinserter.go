@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/putdotio/pas/internal/event"
-	"github.com/putdotio/pas/internal/inserter"
-	"github.com/putdotio/pas/internal/property"
+	"pas/internal/event"
+	"pas/internal/inserter"
+	"pas/internal/property"
 )
 
 type EventInserter struct {

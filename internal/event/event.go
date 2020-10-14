@@ -6,8 +6,8 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/putdotio/pas/internal/property"
-	"github.com/putdotio/pas/internal/user"
+	"pas/internal/property"
+	"pas/internal/user"
 )
 
 type Event struct {

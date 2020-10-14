@@ -4,7 +4,8 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/putdotio/pas/internal/property"
+	"pas/internal/property"
+
 	"github.com/stretchr/testify/assert"
 )
 

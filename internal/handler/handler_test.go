@@ -12,10 +12,10 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/putdotio/pas/internal/analytics"
-	"github.com/putdotio/pas/internal/event"
-	"github.com/putdotio/pas/internal/handler"
-	"github.com/putdotio/pas/internal/property"
+	"pas/internal/analytics"
+	"pas/internal/event"
+	"pas/internal/handler"
+	"pas/internal/property"
 )
 
 const localDSN = "root@(127.0.0.1:3306)/test"
