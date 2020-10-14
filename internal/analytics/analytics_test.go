@@ -9,10 +9,10 @@ import (
 	"testing"
 	"time"
 
-	"pas/internal/analytics"
-	"pas/internal/event"
-	"pas/internal/property"
-	"pas/internal/user"
+	"github.com/putdotio/pas/internal/analytics"
+	"github.com/putdotio/pas/internal/event"
+	"github.com/putdotio/pas/internal/property"
+	"github.com/putdotio/pas/internal/user"
 
 	"github.com/stretchr/testify/assert"
 )

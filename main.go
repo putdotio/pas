@@ -11,9 +11,9 @@ import (
 	"syscall"
 	"time"
 
-	"pas/internal/analytics"
-	"pas/internal/handler"
-	"pas/internal/server"
+	"github.com/putdotio/pas/internal/analytics"
+	"github.com/putdotio/pas/internal/handler"
+	"github.com/putdotio/pas/internal/server"
 )
 
 // Version of application

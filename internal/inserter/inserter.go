@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"time"
 
-	"pas/internal/property"
+	"github.com/putdotio/pas/internal/property"
 
 	"github.com/go-sql-driver/mysql"
 )

@@ -3,8 +3,8 @@ package main
 import (
 	"testing"
 
-	"pas/internal/event"
-	"pas/internal/property"
+	"github.com/putdotio/pas/internal/event"
+	"github.com/putdotio/pas/internal/property"
 
 	"github.com/naoina/toml"
 	"github.com/stretchr/testify/assert"
