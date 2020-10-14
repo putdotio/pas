@@ -1,0 +1,22 @@
+version: '3.2'
+services:
+  mysql:
+    image: pas-mysql
+    container_name: pas-mysql
+    build:
+      dockerfile: Dockerfile-mysql
+      context: .
+    ports:
+      - "3306:3306"
+  pas:
+    image: pas
+    container_name: pas
+    build:
+      dockerfile: Dockerfile-pas
+      context: .
+    depends_on:
+      - mysql
+    ports:
+      - "8080:8080"
+    tty: true
+    privileged: true
