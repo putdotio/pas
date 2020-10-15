@@ -13,6 +13,7 @@ import (
 	"github.com/putdotio/pas/internal/event"
 	"github.com/putdotio/pas/internal/property"
 	"github.com/putdotio/pas/internal/user"
+
 	"github.com/stretchr/testify/assert"
 )
 

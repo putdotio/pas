@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/putdotio/pas/internal/user"
+
 	"github.com/stretchr/testify/assert"
 )
 

@@ -4,8 +4,9 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/go-sql-driver/mysql"
 	"github.com/putdotio/pas/internal/property"
+
+	"github.com/go-sql-driver/mysql"
 )
 
 type Inserter interface {
