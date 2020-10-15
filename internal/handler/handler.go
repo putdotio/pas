@@ -66,6 +66,7 @@ func (s *Handler) handleUsers(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	// todo: if len(users) == 0 -> return
 	_, err = s.analytics.UpdateUsers(users.Users)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

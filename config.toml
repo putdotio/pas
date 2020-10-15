@@ -1,0 +1,12 @@
+ListenAddress = "0.0.0.0:8080"
+ShutdownTimeout = 5000
+MySQLDSN = "pas:123@(mysql:3306)/pas"
+
+[User]
+name = "string"
+email = "string"
+
+[Events]
+
+[Events.page_viewed]
+path = "string"
