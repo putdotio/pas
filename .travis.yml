@@ -4,6 +4,7 @@ language: go
 services:
 - mysql
 install:
+- go mod download
 - go install
 before_script:
 - go build -ldflags="-X main.Version=$TRAVIS_TAG"
