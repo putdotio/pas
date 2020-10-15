@@ -38,6 +38,7 @@ var types = map[string]func([]string) (typeInterface, error){
 	"date":        newDate,
 	"datetime":    newDateTime,
 	"decimal":     newDecimal,
+	"json":        newJson,
 }
 
 func (t2 *Type) UnmarshalText(text []byte) error {

@@ -10,3 +10,7 @@ email = "string"
 
 [Events.page_viewed]
 path = "string"
+
+[Events.event_foo]
+name = "string"
+data = "json"
