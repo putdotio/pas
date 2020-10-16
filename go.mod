@@ -8,4 +8,5 @@ require (
 	github.com/naoina/go-stringutil v0.1.0 // indirect
 	github.com/naoina/toml v0.1.1
 	github.com/rs/cors v1.7.0
+	github.com/stretchr/testify v1.6.1
 )
