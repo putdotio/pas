@@ -38,12 +38,12 @@ var types = map[string]func([]string) (typeInterface, error){
 	"date":        newDate,
 	"datetime":    newDateTime,
 	"decimal":     newDecimal,
-	"json":        newJson,
+	"json":        newJSON,
 }
 
 func (t2 *Type) UnmarshalText(text []byte) error {
 	s := string(text)
-	s = strings.Replace(s, " ", "", -1)
+	s = strings.Replace(s, " ", "", -1) // nolint
 	parts := strings.SplitN(s, "(", 2)
 	t := parts[0]
 	var args []string

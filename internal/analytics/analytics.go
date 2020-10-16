@@ -107,6 +107,7 @@ func (p *Analytics) Alias(previousID, userID user.ID, userHash string) error {
 	if err != nil {
 		return err
 	}
+	defer rows.Close()
 	var tables []string
 	for rows.Next() {
 		var table string

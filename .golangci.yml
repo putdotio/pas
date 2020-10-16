@@ -14,6 +14,11 @@ linters:
     - goerr113
     - nlreturn
     - testpackage
+    - gofumpt
+    - godot
+    - noctx
+    - nestif
+    - gochecknoinits
 issues:
   exclude-rules:
     - path: _test\.go

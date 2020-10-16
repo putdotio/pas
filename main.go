@@ -69,6 +69,6 @@ func main() {
 
 	err = server.Shutdown(ctx)
 	if err != nil {
-		log.Fatal("shutdown error:", err)
+		log.Fatal("shutdown error:", err) // nolint
 	}
 }

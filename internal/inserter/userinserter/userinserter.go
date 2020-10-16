@@ -89,6 +89,7 @@ func (i UserInserter) ExistingColumns(db *sql.DB) (map[string]struct{}, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 	existingColumns := make(map[string]struct{})
 	for rows.Next() {
 		var col string
