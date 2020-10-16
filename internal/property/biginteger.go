@@ -35,12 +35,12 @@ func (t BigInteger) ConvertValue(v interface{}) (driver.Value, error) {
 	case int8:
 		return int64(i), nil
 	case uint:
-		if i > math.MaxInt64 {
+		if i > math.MaxUint32 {
 			return nil, fmt.Errorf("number is greater then max big_integer value: %v", v)
 		}
 		return int64(i), nil
 	case uint64:
-		if i > math.MaxInt64 {
+		if i > math.MaxUint64 {
 			return nil, fmt.Errorf("number is greater then max big_integer value: %v", v)
 		}
 		return int64(i), nil

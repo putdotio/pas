@@ -46,7 +46,7 @@ func (t Integer) int64(v interface{}) (int64, error) {
 	case int8:
 		return int64(i), nil
 	case uint:
-		if i > math.MaxInt64 {
+		if i > math.MaxUint32 {
 			return 0, fmt.Errorf("number is greater then max integer value: %v", v)
 		}
 		return int64(i), nil
