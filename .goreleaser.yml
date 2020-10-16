@@ -6,6 +6,8 @@ builds:
       - CGO_ENABLED=0
     goos:
       - linux
+    goarch:
+        - amd64
 archives:
   - format: tar.gz
     name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
