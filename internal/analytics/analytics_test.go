@@ -16,7 +16,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const localDSN = "root:123@(127.0.0.1:3306)/test"
+const localDSN = "root:123@(mysql:3306)/test"
 const secret = "foobar"
 
 func TestInsertEvents(t *testing.T) {
