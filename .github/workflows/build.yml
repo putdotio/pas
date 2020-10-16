@@ -32,6 +32,7 @@ jobs:
         with:
           mysql database: test
           mysql user: root
+          mysql password: 123
 
       - name: Test
         run: go test -race -v -covermode atomic -coverprofile=covprofile ./...

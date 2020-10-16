@@ -18,7 +18,7 @@ import (
 	"github.com/putdotio/pas/internal/property"
 )
 
-const localDSN = "root@(127.0.0.1:3306)/test"
+const localDSN = "root:123@(127.0.0.1:3306)/test"
 const secret = "foobar"
 
 func TestPostEvents(t *testing.T) {
