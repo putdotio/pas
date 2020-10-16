@@ -8,15 +8,6 @@ on:
       - created
 
 jobs:
-  lint:
-    name: Lint
-    runs-on: ubuntu-latest
-    steps:
-      - name: Lint
-        uses: golangci/golangci-lint-action@v2
-        with:
-          version: v1.31
-
   test:
     name: Test
     needs: lint
@@ -27,6 +18,11 @@ jobs:
           go-version: 1.15
 
       - uses: actions/checkout@v2
+
+      - name: Lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          version: v1.31
 
       - name: Get dependencies
         run: go mod download
