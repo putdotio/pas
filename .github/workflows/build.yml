@@ -31,6 +31,7 @@ jobs:
         uses: mirromutth/mysql-action@v1.1
         with:
           mysql database: test
+          mysql user: root
 
       - name: Test
         run: go test -race -v -covermode atomic -coverprofile=covprofile ./...
