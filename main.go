@@ -26,13 +26,13 @@ func init() {
 }
 
 var (
-	version    = flag.Bool("version", false, "version")
-	configPath = flag.String("config", "config.toml", "config file path")
+	versionFlag = flag.Bool("version", false, "version")
+	configPath  = flag.String("config", "config.toml", "config file path")
 )
 
 func main() {
 	flag.Parse()
-	if *version {
+	if *versionFlag {
 		fmt.Println(Version)
 		return
 	}
