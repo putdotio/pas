@@ -8,8 +8,18 @@ on:
       - created
 
 jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          version: v1.31
+
   test:
     name: Test
+    needs: lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-go@v2
@@ -30,11 +40,6 @@ jobs:
 
       - name: Build
         run: go build -v ./...
-
-      - name: Lint
-        uses: golangci/golangci-lint-action@v2
-        with:
-          version: v1.31
 
       - name: Test
         run: go test -race -v -covermode atomic -coverprofile=covprofile ./...
