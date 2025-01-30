@@ -7,6 +7,6 @@ RUN go mod download
 COPY . ./
 RUN go install
 
-ADD config.toml /etc/pas.toml
+COPY ./build/pas/config.toml /etc/pas.toml
 
 ENTRYPOINT ["pas", "-config", "/etc/pas.toml"]

@@ -11,6 +11,8 @@ import (
 type Config struct {
 	// Listen address for HTTP server.
 	ListenAddress string
+	// Listen address for HTTP metrics server.
+	ListenAddressForMetrics string
 	// Give some time to unfinished HTTP requests before shutting down the server (milliseconds).
 	ShutdownTimeout uint
 	// MySQL database DSN.
