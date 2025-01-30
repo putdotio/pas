@@ -3,9 +3,9 @@ name: build
 on:
   pull_request:
     types: [opened]
-  release:
-    types:
-      - created
+  push:
+    branches:
+      - master
 
 jobs:
   test:
