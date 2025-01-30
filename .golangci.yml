@@ -1,27 +1,8 @@
 linters:
-  enable-all: true
-  disable:
-    - maligned
-    - lll
-    - gochecknoglobals
-    - gocyclo
-    - nakedret
-    - funlen
-    - wsl
-    - gocognit
-    - gomnd
-    - godox
-    - goerr113
-    - nlreturn
-    - testpackage
-    - gofumpt
-    - godot
-    - noctx
-    - nestif
-    - gochecknoinits
 issues:
   exclude-rules:
     - path: _test\.go
       linters:
         - goconst
         - errcheck
+        - noctx
