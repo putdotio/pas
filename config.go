@@ -1,10 +1,8 @@
 package main
 
 import (
-	"os"
-
+	"github.com/BurntSushi/toml"
 	"github.com/kelseyhightower/envconfig"
-	"github.com/naoina/toml"
 	"github.com/putdotio/pas/internal/event"
 	"github.com/putdotio/pas/internal/property"
 )
@@ -27,13 +25,7 @@ type Config struct {
 
 func NewConfig() (*Config, error) {
 	c := new(Config)
-	f, err := os.Open(*configPath)
-	if err != nil {
-		return nil, err
-	}
-	defer func() { _ = f.Close() }()
-	dec := toml.NewDecoder(f)
-	err = dec.Decode(&c)
+	_, err := toml.DecodeFile(*configPath, c)
 	if err != nil {
 		return nil, err
 	}

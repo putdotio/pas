@@ -3,7 +3,7 @@ package main
 import (
 	"testing"
 
-	"github.com/naoina/toml"
+	"github.com/BurntSushi/toml"
 	"github.com/putdotio/pas/internal/event"
 	"github.com/putdotio/pas/internal/property"
 	"github.com/stretchr/testify/assert"
