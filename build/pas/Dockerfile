@@ -1,6 +1,6 @@
-FROM golang:1.15
+FROM golang:1.23.1
 
-WORKDIR /src
+WORKDIR /pas
 COPY go.* ./
 RUN go mod download
 

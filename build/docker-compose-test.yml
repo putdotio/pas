@@ -1,0 +1,22 @@
+services:
+  mysql:
+    image: pas/mysql
+    container_name: pas-mysql
+    build:
+      dockerfile: ./build/mysql/Dockerfile
+      context: ..
+    environment:
+      MYSQL_DATABASE: pas
+      MYSQL_USER: pas
+      MYSQL_PASSWORD: 123
+  pas-test:
+    image: pas/test
+    container_name: pas-test
+    build:
+      dockerfile: ./build/test/Dockerfile
+      context: ..
+    depends_on:
+      - mysql
+    tty: true
+    volumes:
+      - ../coverage:/coverage

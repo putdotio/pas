@@ -9,57 +9,19 @@ on:
 
 jobs:
   test:
-    name: Test
     runs-on: ubuntu-latest
-    services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_ROOT_PASSWORD: 123
-          MYSQL_DATABASE: test
-        options: >-
-          --health-cmd="mysqladmin ping"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
-        ports:
-          # Maps tcp port 3306 on service container to the host
-          - 3306:3306
     steps:
-      - uses: actions/setup-go@v2
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
         with:
-          go-version: 1.15
+          go-version: '1.23'
 
-      - uses: actions/checkout@v2
-
-      - name: Lint
-        uses: golangci/golangci-lint-action@v2
-        with:
-          version: v1.31
-
-      - name: Get dependencies
-        run: go mod download
-
-      - name: Test
-        run: go test -race -v -covermode atomic -coverprofile=covprofile ./...
+      - name: Run tests
+        run: make test
 
       - name: Send coverage
         uses: shogo82148/actions-goveralls@v1
         with:
-          path-to-profile: covprofile
-
-  goreleaser:
-    name: Build and release binary
-    needs: test
-    runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
-        with:
-          go-version: 1.15
-      - uses: goreleaser/goreleaser-action@v2.2.1
-        with:
-          args: release --rm-dist
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          path-to-profile: ./coverage/covprofile
