@@ -13,16 +13,26 @@ import (
 	"testing"
 
 	"github.com/putdotio/pas/internal/analytics"
+	"github.com/putdotio/pas/internal/config"
 	"github.com/putdotio/pas/internal/event"
 	"github.com/putdotio/pas/internal/handler"
 	"github.com/putdotio/pas/internal/property"
 )
 
-const localDSN = "pas:123@(mysql:3306)/pas"
 const secret = "foobar"
 
+var testConfig *config.Config
+
+func init() {
+	var err error
+	testConfig, err = config.NewConfig("/etc/pas.toml")
+	if err != nil {
+		panic(err)
+	}
+}
+
 func TestPostEvents(t *testing.T) {
-	db, err := sql.Open("mysql", localDSN)
+	db, err := sql.Open("mysql", testConfig.MySQLDSN)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -57,7 +67,7 @@ func TestPostEvents(t *testing.T) {
 }
 
 func TestPostUsers(t *testing.T) {
-	db, err := sql.Open("mysql", localDSN)
+	db, err := sql.Open("mysql", testConfig.MySQLDSN)
 	if err != nil {
 		log.Fatal(err)
 	}

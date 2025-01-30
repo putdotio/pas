@@ -12,6 +12,7 @@ COPY go.sum .
 RUN go mod download
 
 COPY ./build/test/entrypoint.sh /root/entrypoint.sh
+COPY ./build/test/config.toml /etc/pas.toml
 COPY . .
 
 ENTRYPOINT ["/bin/bash", "/root/entrypoint.sh"]

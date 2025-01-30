@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/putdotio/pas/internal/analytics"
+	"github.com/putdotio/pas/internal/config"
 	"github.com/putdotio/pas/internal/handler"
 	"github.com/putdotio/pas/internal/server"
 )
@@ -37,7 +38,7 @@ func main() {
 		return
 	}
 
-	config, err := NewConfig()
+	config, err := config.NewConfig(*configPath)
 	if err != nil {
 		log.Fatal(err)
 	}

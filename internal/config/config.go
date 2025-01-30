@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"github.com/BurntSushi/toml"
@@ -23,9 +23,9 @@ type Config struct {
 	Events map[event.Name]property.Types
 }
 
-func NewConfig() (*Config, error) {
+func NewConfig(configPath string) (*Config, error) {
 	c := new(Config)
-	_, err := toml.DecodeFile(*configPath, c)
+	_, err := toml.DecodeFile(configPath, c)
 	if err != nil {
 		return nil, err
 	}

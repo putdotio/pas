@@ -1,9 +1,10 @@
-package main
+package config_test
 
 import (
 	"testing"
 
 	"github.com/BurntSushi/toml"
+	"github.com/putdotio/pas/internal/config"
 	"github.com/putdotio/pas/internal/event"
 	"github.com/putdotio/pas/internal/property"
 	"github.com/stretchr/testify/assert"
@@ -22,7 +23,7 @@ func TestConfigUnmarshalEvents(t *testing.T) {
 	[events.test_event2]
 	test_property2 = "string"
 	`
-	var c Config
+	var c config.Config
 	err := toml.Unmarshal([]byte(s), &c)
 	if err != nil {
 		t.Fatal(err)
