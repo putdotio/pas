@@ -4,14 +4,15 @@ go 1.23
 
 require (
 	github.com/BurntSushi/toml v1.4.0
-	github.com/go-sql-driver/mysql v1.5.0
+	github.com/go-sql-driver/mysql v1.8.1
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/rs/cors v1.7.0
-	github.com/stretchr/testify v1.6.1
+	github.com/rs/cors v1.11.1
+	github.com/stretchr/testify v1.10.0
 )
 
 require (
-	github.com/davecgh/go-spew v1.1.0 // indirect
+	filippo.io/edwards25519 v1.1.0 // indirect
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
