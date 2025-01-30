@@ -22,8 +22,6 @@ import (
 
 var (
 	version = "v0.0.0"
-	commit  = "none"
-	date    = "unknown"
 )
 
 var (
@@ -32,13 +30,13 @@ var (
 )
 
 func main() {
-	fmt.Printf("Starting PAS version: %s, commit: %s, built: %s", version, commit, date)
-
 	flag.Parse()
 	if *versionFlag {
 		fmt.Println(version)
 		return
 	}
+
+	log.Printf("Starting PAS version: %s\n", version)
 
 	config, err := config.NewConfig(*configPath)
 	if err != nil {
