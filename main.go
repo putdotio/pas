@@ -20,14 +20,11 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-// Version of application
-var Version string
-
-func init() {
-	if Version == "" {
-		Version = "v0.0.0"
-	}
-}
+var (
+	version = "v0.0.0"
+	commit  = "none"
+	date    = "unknown"
+)
 
 var (
 	versionFlag = flag.Bool("version", false, "version")
@@ -35,9 +32,11 @@ var (
 )
 
 func main() {
+	fmt.Printf("Starting PAS version: %s, commit: %s, built: %s", version, commit, date)
+
 	flag.Parse()
 	if *versionFlag {
-		fmt.Println(Version)
+		fmt.Println(version)
 		return
 	}
 
