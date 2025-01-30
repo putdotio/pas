@@ -13,8 +13,6 @@ builds:
 archives:
   - format: tar.gz
     name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
-    replacements:
-      amd64: x86_64
 checksum:
   name_template: 'checksums.txt'
 snapshot:
